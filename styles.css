@@ -116,3 +116,15 @@ th {
   color: var(--muted);
   font-weight: 600;
 }
+
+.difference-positive {
+  color: var(--ok);
+}
+
+.difference-zero {
+  color: #ffffff;
+}
+
+.difference-negative {
+  color: var(--danger);
+}

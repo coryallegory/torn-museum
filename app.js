@@ -45,6 +45,18 @@ function formatPercent(value) {
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 }
 
+function getDifferencePercent(todaysPrice, itemMarketLow) {
+  if (!Number.isFinite(todaysPrice) || todaysPrice === 0 || !Number.isFinite(itemMarketLow)) return NaN;
+  return ((itemMarketLow - todaysPrice) / todaysPrice) * 100;
+}
+
+function getDifferenceClassName(differencePercent) {
+  if (!Number.isFinite(differencePercent)) return '';
+  if (differencePercent > 0) return 'difference-positive';
+  if (differencePercent < 0) return 'difference-negative';
+  return 'difference-zero';
+}
+
 function setTokenUi(hasToken) {
   els.tokenForm.classList.toggle('hidden', hasToken);
   els.tokenActive.classList.toggle('hidden', !hasToken);
@@ -166,16 +178,18 @@ async function getPointsAverage(token) {
 
 function render(plushies, pointsAverage) {
   els.tableBody.innerHTML = plushies
-    .map(
-      (p) => `
+    .map((p) => {
+      const differencePercent = getDifferencePercent(p.todaysPrice, p.itemMarketLow);
+      const differenceClassName = getDifferenceClassName(differencePercent);
+      return `
       <tr>
         <td>${p.name}</td>
         <td>${formatMoney(p.todaysPrice)}</td>
         <td>${formatMoney(p.itemMarketLow)}</td>
-        <td>${formatPercent(((p.itemMarketLow - p.todaysPrice) / p.todaysPrice) * 100)}</td>
+        <td class="${differenceClassName}">${formatPercent(differencePercent)}</td>
       </tr>
-    `
-    )
+    `;
+    })
     .join('');
 
   const itemMarketLowTotal = plushies.reduce((sum, p) => sum + p.itemMarketLow, 0);
