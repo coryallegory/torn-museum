@@ -126,87 +126,30 @@ async function getPlushiePrices(token) {
 }
 
 function extractPointsAverage(data) {
-  const pointsmarket = data?.pointsmarket ?? data;
+  const rows = data?.pointsmarket;
+  if (!rows || typeof rows !== 'object') return NaN;
 
-  const candidates = [
-    pointsmarket?.average_price,
-    pointsmarket?.average,
-    pointsmarket?.average_30d,
-    pointsmarket?.month_average,
-    pointsmarket?.sell_average,
-    pointsmarket?.sell?.average,
-    pointsmarket?.sell_price_average,
-    pointsmarket?.stats?.month?.sell_average,
-    pointsmarket?.market_value,
-    pointsmarket?.point_value,
-    pointsmarket?.value,
-    pointsmarket?.price
-  ];
+  let totalCostSum = 0;
+  let totalQtySum = 0;
 
-  for (const c of candidates) {
-    const n = Number(c);
-    if (Number.isFinite(n) && n > 0) return n;
-  }
-
-  const listings = pointsmarket?.listings || pointsmarket?.points || [];
-  if (Array.isArray(listings)) {
-    const listingValues = listings
-      .map((entry) => Number(entry.price ?? entry.cost ?? entry.value ?? entry.market_price ?? entry.point_value))
-      .filter((v) => Number.isFinite(v) && v > 0);
-    if (listingValues.length) {
-      return listingValues.reduce((a, b) => a + b, 0) / listingValues.length;
-    }
-  } else if (typeof listings === 'object') {
-    const listingValues = Object.values(listings)
-      .map((entry) => Number(entry?.price ?? entry?.cost ?? entry?.value ?? entry?.market_price ?? entry?.point_value))
-      .filter((v) => Number.isFinite(v) && v > 0);
-    if (listingValues.length) {
-      return listingValues.reduce((a, b) => a + b, 0) / listingValues.length;
+  for (const row of Object.values(rows)) {
+    const quantity = Number(row?.quantity);
+    const totalCost = Number(row?.total_cost);
+    if (Number.isFinite(quantity) && quantity > 0 && Number.isFinite(totalCost) && totalCost > 0) {
+      totalCostSum += totalCost;
+      totalQtySum += quantity;
     }
   }
 
-  const history = pointsmarket?.history || pointsmarket?.sales || [];
-  if (Array.isArray(history) && history.length > 0) {
-    const values = history
-      .map((entry) => Number(entry.price ?? entry.sell_price ?? entry.average_price))
-      .filter((v) => Number.isFinite(v) && v > 0);
-    if (values.length) {
-      return values.reduce((a, b) => a + b, 0) / values.length;
-    }
-  }
-
-  // Last-resort fallback: scan nested objects for average/value fields.
-  const fallbackValues = [];
-  const queue = [pointsmarket];
-  while (queue.length) {
-    const current = queue.shift();
-    if (!current || typeof current !== 'object') continue;
-
-    for (const [key, value] of Object.entries(current)) {
-      if (value && typeof value === 'object') {
-        queue.push(value);
-        continue;
-      }
-
-      if (
-        /(average|avg|price|value|cost)/i.test(key) &&
-        !/(timestamp|quantity|amount|stock|id)/i.test(key)
-      ) {
-        const n = Number(value);
-        if (Number.isFinite(n) && n > 0) fallbackValues.push(n);
-      }
-    }
-  }
-
-  if (fallbackValues.length) {
-    return fallbackValues.reduce((a, b) => a + b, 0) / fallbackValues.length;
+  if (totalQtySum > 0) {
+    return totalCostSum / totalQtySum;
   }
 
   return NaN;
 }
 
 async function getPointsAverage(token) {
-  const url = `https://api.torn.com/v2/market/?selections=pointsmarket&key=${encodeURIComponent(token)}`;
+  const url = `https://api.torn.com/market/?selections=pointsmarket&key=${encodeURIComponent(token)}`;
   const data = await fetchJson(url);
 
   if (data.error) {
