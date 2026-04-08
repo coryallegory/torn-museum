@@ -209,6 +209,7 @@ async function getPointsAverage(token) {
 
 function render(plushies, pointsAverage) {
   const todaysPriceTotal = plushies.reduce((sum, p) => sum + p.todaysPrice, 0);
+  const tenPointValue = Number.isFinite(pointsAverage) ? pointsAverage * 10 : NaN;
 
   els.tableBody.innerHTML = plushies
     .map((p) => {
@@ -217,11 +218,15 @@ function render(plushies, pointsAverage) {
       const bazaarDifferencePercent = getDifferencePercent(p.todaysPrice, p.bazaarLow);
       const bazaarDifferenceClassName = getDifferenceClassName(bazaarDifferencePercent);
       const marketSetWeight = todaysPriceTotal > 0 ? (p.todaysPrice / todaysPriceTotal) * 100 : NaN;
+      const targetPrice = Number.isFinite(tenPointValue) && Number.isFinite(marketSetWeight)
+        ? (marketSetWeight / 100) * tenPointValue
+        : NaN;
       return `
       <tr>
         <td>${p.name}</td>
         <td>${formatMoney(p.todaysPrice)}</td>
         <td>${formatSharePercent(marketSetWeight)}</td>
+        <td>${formatMoney(targetPrice)}</td>
         <td><a href="${getItemMarketUrl(p.id)}" target="_blank" rel="noopener noreferrer">${formatMoney(p.itemMarketLow)}</a></td>
         <td><a href="${getBazaarUrl(p.id)}" target="_blank" rel="noopener noreferrer">${formatMoney(p.bazaarLow)}</a></td>
         <td class="${differenceClassName}">${formatPercent(differencePercent)}</td>
@@ -232,7 +237,6 @@ function render(plushies, pointsAverage) {
     .join('');
 
   const itemMarketLowTotal = plushies.reduce((sum, p) => sum + p.itemMarketLow, 0);
-  const tenPointValue = Number.isFinite(pointsAverage) ? pointsAverage * 10 : NaN;
 
   els.setItemMarketLowTotal.textContent = formatMoney(itemMarketLowTotal);
   els.setTodaysPriceTotal.textContent = formatMoney(todaysPriceTotal);
