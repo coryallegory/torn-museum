@@ -24,12 +24,12 @@ const els = {
   clearToken: document.getElementById('clear-token'),
   tokenStatus: document.getElementById('token-status'),
   tableBody: document.getElementById('plushie-table-body'),
-  setCurrent: document.getElementById('set-current'),
-  setAverage: document.getElementById('set-average'),
+  setItemMarketLowTotal: document.getElementById('set-item-market-low-total'),
+  setTodaysPriceTotal: document.getElementById('set-todays-price-total'),
   pointsAverage: document.getElementById('points-average'),
   tenPointValue: document.getElementById('ten-point-value'),
-  arbCurrent: document.getElementById('arb-current'),
-  arbAverage: document.getElementById('arb-average'),
+  arbItemMarketLowSet: document.getElementById('arb-item-market-low-set'),
+  arbTodaysPriceSet: document.getElementById('arb-todays-price-set'),
   lastUpdated: document.getElementById('last-updated')
 };
 
@@ -111,13 +111,13 @@ async function getPlushiePrices(token) {
       }
 
       const itemmarket = data.itemmarket || data;
-      const current = extractLowestListingPrice(itemmarket);
-      const average30d = extractItemAveragePrice(itemmarket);
+      const itemMarketLow = extractLowestListingPrice(itemmarket);
+      const todaysPrice = extractItemAveragePrice(itemmarket);
 
       return {
         ...plushie,
-        current: Number.isFinite(current) ? current : 0,
-        average30d: Number.isFinite(average30d) ? average30d : 0
+        itemMarketLow: Number.isFinite(itemMarketLow) ? itemMarketLow : 0,
+        todaysPrice: Number.isFinite(todaysPrice) ? todaysPrice : 0
       };
     })
   );
@@ -165,23 +165,23 @@ function render(plushies, pointsAverage) {
       (p) => `
       <tr>
         <td>${p.name}</td>
-        <td>${formatMoney(p.current)}</td>
-        <td>${formatMoney(p.average30d)}</td>
+        <td>${formatMoney(p.itemMarketLow)}</td>
+        <td>${formatMoney(p.todaysPrice)}</td>
       </tr>
     `
     )
     .join('');
 
-  const setCurrent = plushies.reduce((sum, p) => sum + p.current, 0);
-  const setAverage = plushies.reduce((sum, p) => sum + p.average30d, 0);
+  const itemMarketLowTotal = plushies.reduce((sum, p) => sum + p.itemMarketLow, 0);
+  const todaysPriceTotal = plushies.reduce((sum, p) => sum + p.todaysPrice, 0);
   const tenPointValue = Number.isFinite(pointsAverage) ? pointsAverage * 10 : NaN;
 
-  els.setCurrent.textContent = formatMoney(setCurrent);
-  els.setAverage.textContent = formatMoney(setAverage);
+  els.setItemMarketLowTotal.textContent = formatMoney(itemMarketLowTotal);
+  els.setTodaysPriceTotal.textContent = formatMoney(todaysPriceTotal);
   els.pointsAverage.textContent = formatMoney(pointsAverage);
   els.tenPointValue.textContent = formatMoney(tenPointValue);
-  els.arbCurrent.textContent = formatMoney(tenPointValue - setCurrent);
-  els.arbAverage.textContent = formatMoney(tenPointValue - setAverage);
+  els.arbItemMarketLowSet.textContent = formatMoney(tenPointValue - itemMarketLowTotal);
+  els.arbTodaysPriceSet.textContent = formatMoney(tenPointValue - todaysPriceTotal);
   els.lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
 }
 
