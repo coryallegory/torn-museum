@@ -122,11 +122,27 @@ function extractItemAveragePrice(itemmarket) {
   return NaN;
 }
 
+function extractBazaarLowPrice(data) {
+  const listings = data?.listings;
+  if (!Array.isArray(listings) || listings.length === 0) return NaN;
+
+  const prices = listings
+    .map((listing) => Number(listing?.price))
+    .filter((price) => Number.isFinite(price) && price > 0);
+
+  if (!prices.length) return NaN;
+  return Math.min(...prices);
+}
+
 async function getPlushiePrices(token) {
   const results = await Promise.all(
     PLUSHIES.map(async (plushie) => {
       const url = `https://api.torn.com/v2/market/${plushie.id}?selections=itemmarket&key=${encodeURIComponent(token)}`;
-      const data = await fetchJson(url);
+      const bazaarLowUrl = `https://weav3r.dev/api/marketplace/${plushie.id}`;
+      const [data, bazaarData] = await Promise.all([
+        fetchJson(url),
+        fetchJson(bazaarLowUrl).catch(() => null)
+      ]);
 
       if (data.error) {
         throw new Error(`Torn API error ${data.error.code}: ${data.error.error}`);
@@ -135,11 +151,13 @@ async function getPlushiePrices(token) {
       const itemmarket = data.itemmarket || data;
       const itemMarketLow = extractLowestListingPrice(itemmarket);
       const todaysPrice = extractItemAveragePrice(itemmarket);
+      const bazaarLow = extractBazaarLowPrice(bazaarData);
 
       return {
         ...plushie,
         itemMarketLow: Number.isFinite(itemMarketLow) ? itemMarketLow : 0,
-        todaysPrice: Number.isFinite(todaysPrice) ? todaysPrice : 0
+        todaysPrice: Number.isFinite(todaysPrice) ? todaysPrice : 0,
+        bazaarLow: Number.isFinite(bazaarLow) ? bazaarLow : 0
       };
     })
   );
@@ -195,6 +213,7 @@ function render(plushies, pointsAverage) {
         <td>${formatMoney(p.todaysPrice)}</td>
         <td>${formatSharePercent(marketSetWeight)}</td>
         <td>${formatMoney(p.itemMarketLow)}</td>
+        <td>${formatMoney(p.bazaarLow)}</td>
         <td class="${differenceClassName}">${formatPercent(differencePercent)}</td>
       </tr>
     `;
