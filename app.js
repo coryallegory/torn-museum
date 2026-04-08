@@ -126,24 +126,22 @@ async function getPlushiePrices(token) {
 }
 
 function extractPointsAverage(data) {
-  const pointsmarket = data?.pointsmarket ?? data;
-  const rows = pointsmarket?.points;
-  if (rows && typeof rows === 'object') {
-    let totalCostSum = 0;
-    let totalQtySum = 0;
+  const rows = data?.pointsmarket;
+  if (!rows || typeof rows !== 'object') return NaN;
 
-    for (const row of Object.values(rows)) {
-      const totalCost = Number(row?.total_cost);
-      const quantity = Number(row?.quantity);
-      if (Number.isFinite(totalCost) && totalCost > 0 && Number.isFinite(quantity) && quantity > 0) {
-        totalCostSum += totalCost;
-        totalQtySum += quantity;
-      }
+  let totalCostSum = 0;
+  let totalQtySum = 0;
+
+  for (const row of Object.values(rows)) {
+    const quantity = Number(row?.quantity);
+    const totalCost = Number(row?.total_cost);
+    if (Number.isFinite(quantity) && quantity > 0 && Number.isFinite(totalCost) && totalCost > 0) {
+      totalCostSum += totalCost;
+      totalQtySum += quantity;
     }
 
-    if (totalQtySum > 0) {
-      return totalCostSum / totalQtySum;
-    }
+  if (totalQtySum > 0) {
+    return totalCostSum / totalQtySum;
   }
 
   return NaN;
