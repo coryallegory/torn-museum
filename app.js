@@ -45,6 +45,11 @@ function formatPercent(value) {
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 }
 
+function formatWeightPercent(value) {
+  if (!Number.isFinite(value)) return '--';
+  return `${value.toFixed(2)}%`;
+}
+
 function setTokenUi(hasToken) {
   els.tokenForm.classList.toggle('hidden', hasToken);
   els.tokenActive.classList.toggle('hidden', !hasToken);
@@ -165,21 +170,25 @@ async function getPointsAverage(token) {
 }
 
 function render(plushies, pointsAverage) {
+  const itemMarketLowTotal = plushies.reduce((sum, p) => sum + p.itemMarketLow, 0);
+  const todaysPriceTotal = plushies.reduce((sum, p) => sum + p.todaysPrice, 0);
+
   els.tableBody.innerHTML = plushies
-    .map(
-      (p) => `
+    .map((p) => {
+      const marketSetWeight = todaysPriceTotal > 0 ? (p.todaysPrice / todaysPriceTotal) * 100 : NaN;
+
+      return `
       <tr>
         <td>${p.name}</td>
         <td>${formatMoney(p.todaysPrice)}</td>
         <td>${formatMoney(p.itemMarketLow)}</td>
         <td>${formatPercent(((p.itemMarketLow - p.todaysPrice) / p.todaysPrice) * 100)}</td>
+        <td>${formatWeightPercent(marketSetWeight)}</td>
       </tr>
-    `
-    )
+    `;
+    })
     .join('');
 
-  const itemMarketLowTotal = plushies.reduce((sum, p) => sum + p.itemMarketLow, 0);
-  const todaysPriceTotal = plushies.reduce((sum, p) => sum + p.todaysPrice, 0);
   const tenPointValue = Number.isFinite(pointsAverage) ? pointsAverage * 10 : NaN;
 
   els.setItemMarketLowTotal.textContent = formatMoney(itemMarketLowTotal);
