@@ -118,7 +118,7 @@ th {
 }
 
 .difference-positive {
-  color: var(--ok);
+  color: var(--danger);
 }
 
 .difference-zero {
@@ -126,5 +126,5 @@ th {
 }
 
 .difference-negative {
-  color: var(--danger);
+  color: var(--ok);
 }
