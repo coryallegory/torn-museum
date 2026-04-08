@@ -67,14 +67,57 @@ async function fetchJson(url) {
   return res.json();
 }
 
-async function getPlushiePrices() {
+function extractLowestListingPrice(itemmarket) {
+  const listings = itemmarket?.listings;
+  if (!listings) return NaN;
+
+  const candidates = [];
+
+  if (Array.isArray(listings)) {
+    for (const listing of listings) {
+      const price = Number(listing?.price);
+      if (Number.isFinite(price) && price > 0) {
+        candidates.push(price);
+      }
+    }
+  } else if (typeof listings === 'object') {
+    const asRecord = /** @type {Record<string, unknown>} */ (listings);
+    for (const listing of Object.values(asRecord)) {
+      const price = Number(listing?.price);
+      if (Number.isFinite(price) && price > 0) {
+        candidates.push(price);
+      }
+    }
+  }
+
+  if (!candidates.length) return NaN;
+  return Math.min(...candidates);
+}
+
+function extractItemAveragePrice(itemmarket) {
+  const average = Number(itemmarket?.item?.average_price);
+  if (Number.isFinite(average) && average > 0) return average;
+  return NaN;
+}
+
+async function getPlushiePrices(token) {
   const results = await Promise.all(
     PLUSHIES.map(async (plushie) => {
-      const data = await fetchJson(`https://weav3r.dev/marketplace/${plushie.id}`);
+      const url = `https://api.torn.com/v2/market/${plushie.id}?selections=itemmarket&key=${encodeURIComponent(token)}`;
+      const data = await fetchJson(url);
+
+      if (data.error) {
+        throw new Error(`Torn API error ${data.error.code}: ${data.error.error}`);
+      }
+
+      const itemmarket = data.itemmarket || data;
+      const current = extractLowestListingPrice(itemmarket);
+      const average30d = extractItemAveragePrice(itemmarket);
+
       return {
         ...plushie,
-        current: Number(data.market_price) || 0,
-        average30d: Number(data.bazaar_average) || 0
+        current: Number.isFinite(current) ? current : 0,
+        average30d: Number.isFinite(average30d) ? average30d : 0
       };
     })
   );
@@ -159,7 +202,7 @@ async function refreshData() {
   try {
     els.tokenStatus.textContent = 'Refreshing data...';
     const [plushies, pointsAverage] = await Promise.all([
-      getPlushiePrices(),
+      getPlushiePrices(token),
       getPointsAverage(token)
     ]);
 

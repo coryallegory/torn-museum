@@ -21,8 +21,8 @@ The app must continue to support all of the following unless explicitly changed:
   - token is stored in browser `localStorage`.
   - when a token is stored, show a **Clear** action instead of input flow.
 - Token/key requirement:
-  - require a **Torn Custom API key** with `market -> pointsmarket` permission (API v2).
-  - this is the minimum permission expectation for points-average retrieval in this app.
+  - require a **Torn Custom API key** with `market -> itemmarket` and `market -> pointsmarket` permissions (API v2).
+  - these are the minimum permission expectations for plushie and points retrieval in this app.
 - Data refresh behavior:
   - refresh all remote data every **30 seconds** while token is active.
 - Plushie coverage:
@@ -73,8 +73,8 @@ The app must continue to support all of the following unless explicitly changed:
     `https://api.torn.com/key/?selections=info&key=YOUR_KEY_HERE`
   - missing `market -> pointsmarket` access should be surfaced clearly to users.
 
-- Plushie market metrics are currently sourced from `weav3r.dev` marketplace endpoints.
-- Point market sell-average data is sourced from Torn API endpoint(s) requiring token.
+- Plushie market metrics are sourced from Torn API `market/{itemId}?selections=itemmarket`.
+- Point market sell-average data is sourced from Torn API `market/?selections=pointsmarket`.
 - Torn and third-party response schemas may evolve:
   - parse defensively;
   - keep fallback extraction logic explicit and tested.

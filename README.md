@@ -32,6 +32,8 @@ See `CONTEXT.md` for goals, architecture guidance, and regression-prevention gua
 
 ## API key requirement
 
-Use a **Torn Custom API key** that includes the **`market -> pointsmarket`** permission (API v2).
+Use a **Torn Custom API key** that includes **`market -> itemmarket`** and **`market -> pointsmarket`** permissions (API v2).
 You can check a key's permissions at:
 `https://api.torn.com/key/?selections=info&key=YOUR_KEY_HERE`
+
+All market data now comes directly from Torn API v2 endpoints to avoid third-party CORS issues on GitHub Pages.
