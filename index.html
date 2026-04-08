@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Torn Plushie Arbitrage</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Torn Plushie Arbitrage Tracker</h1>
+
+      <section class="card" id="token-card">
+        <h2>API Token</h2>
+        <p class="muted">
+          Use a Torn Custom API key that includes the market → pointsmarket selection (API v2). The key is stored only in your browser local storage.
+        </p>
+        <form id="token-form" autocomplete="off">
+          <label for="token-input">Torn API Token</label>
+          <div class="token-row">
+            <input
+              id="token-input"
+              name="token"
+              type="password"
+              minlength="16"
+              required
+              placeholder="Paste Torn custom key (market → pointsmarket)"
+            />
+            <button type="submit">Apply</button>
+          </div>
+        </form>
+        <div id="token-active" class="hidden">
+          <p class="success">Token saved and active.</p>
+          <button id="clear-token" type="button" class="danger">Clear saved token</button>
+        </div>
+        <p id="token-status" class="status"></p>
+      </section>
+
+      <section class="card summary">
+        <h2>Plushie Set Value (1 of each)</h2>
+        <div class="summary-grid">
+          <div>
+            <span class="label">Current Market Total</span>
+            <strong id="set-current">--</strong>
+          </div>
+          <div>
+            <span class="label">30-Day Average Total</span>
+            <strong id="set-average">--</strong>
+          </div>
+          <div>
+            <span class="label">Point Avg Sell (30 days)</span>
+            <strong id="points-average">--</strong>
+          </div>
+          <div>
+            <span class="label">10-Point Value</span>
+            <strong id="ten-point-value">--</strong>
+          </div>
+          <div>
+            <span class="label">Arbitrage (10 points - current set)</span>
+            <strong id="arb-current">--</strong>
+          </div>
+          <div>
+            <span class="label">Arbitrage (10 points - avg set)</span>
+            <strong id="arb-average">--</strong>
+          </div>
+        </div>
+        <p class="muted" id="last-updated">Last updated: --</p>
+      </section>
+
+      <section class="card">
+        <h2>Plushie Market Prices</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Plushie</th>
+              <th>Current Market Price</th>
+              <th>Average Price (30 days)</th>
+            </tr>
+          </thead>
+          <tbody id="plushie-table-body"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
