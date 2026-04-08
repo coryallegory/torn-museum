@@ -139,6 +139,7 @@ function extractPointsAverage(data) {
       totalCostSum += totalCost;
       totalQtySum += quantity;
     }
+  }
 
   if (totalQtySum > 0) {
     return totalCostSum / totalQtySum;
