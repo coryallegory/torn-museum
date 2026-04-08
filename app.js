@@ -206,6 +206,8 @@ function render(plushies, pointsAverage) {
     .map((p) => {
       const differencePercent = getDifferencePercent(p.todaysPrice, p.itemMarketLow);
       const differenceClassName = getDifferenceClassName(differencePercent);
+      const bazaarDifferencePercent = getDifferencePercent(p.todaysPrice, p.bazaarLow);
+      const bazaarDifferenceClassName = getDifferenceClassName(bazaarDifferencePercent);
       const marketSetWeight = todaysPriceTotal > 0 ? (p.todaysPrice / todaysPriceTotal) * 100 : NaN;
       return `
       <tr>
@@ -215,6 +217,7 @@ function render(plushies, pointsAverage) {
         <td>${formatMoney(p.itemMarketLow)}</td>
         <td>${formatMoney(p.bazaarLow)}</td>
         <td class="${differenceClassName}">${formatPercent(differencePercent)}</td>
+        <td class="${bazaarDifferenceClassName}">${formatPercent(bazaarDifferencePercent)}</td>
       </tr>
     `;
     })
