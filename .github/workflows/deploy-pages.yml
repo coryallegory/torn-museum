@@ -2,7 +2,7 @@ name: Deploy SPA to GitHub Pages
 
 on:
   push:
-    branches: ["**"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
