@@ -40,6 +40,11 @@ function formatMoney(value) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
 }
 
+function formatPercent(value) {
+  if (!Number.isFinite(value)) return '--';
+  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
+}
+
 function setTokenUi(hasToken) {
   els.tokenForm.classList.toggle('hidden', hasToken);
   els.tokenActive.classList.toggle('hidden', !hasToken);
@@ -165,8 +170,9 @@ function render(plushies, pointsAverage) {
       (p) => `
       <tr>
         <td>${p.name}</td>
-        <td>${formatMoney(p.itemMarketLow)}</td>
         <td>${formatMoney(p.todaysPrice)}</td>
+        <td>${formatMoney(p.itemMarketLow)}</td>
+        <td>${formatPercent(((p.itemMarketLow - p.todaysPrice) / p.todaysPrice) * 100)}</td>
       </tr>
     `
     )
