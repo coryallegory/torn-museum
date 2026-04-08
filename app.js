@@ -134,6 +134,14 @@ function extractBazaarLowPrice(data) {
   return Math.min(...prices);
 }
 
+function getItemMarketUrl(itemId) {
+  return `https://www.torn.com/page.php?sid=ItemMarket#/market/view=search&itemID=${encodeURIComponent(itemId)}`;
+}
+
+function getBazaarUrl(itemId) {
+  return `https://weav3r.dev/item/${encodeURIComponent(itemId)}`;
+}
+
 async function getPlushiePrices(token) {
   const results = await Promise.all(
     PLUSHIES.map(async (plushie) => {
@@ -214,8 +222,8 @@ function render(plushies, pointsAverage) {
         <td>${p.name}</td>
         <td>${formatMoney(p.todaysPrice)}</td>
         <td>${formatSharePercent(marketSetWeight)}</td>
-        <td>${formatMoney(p.itemMarketLow)}</td>
-        <td>${formatMoney(p.bazaarLow)}</td>
+        <td><a href="${getItemMarketUrl(p.id)}" target="_blank" rel="noopener noreferrer">${formatMoney(p.itemMarketLow)}</a></td>
+        <td><a href="${getBazaarUrl(p.id)}" target="_blank" rel="noopener noreferrer">${formatMoney(p.bazaarLow)}</a></td>
         <td class="${differenceClassName}">${formatPercent(differencePercent)}</td>
         <td class="${bazaarDifferenceClassName}">${formatPercent(bazaarDifferencePercent)}</td>
       </tr>
