@@ -12,7 +12,7 @@ Single-page app for Torn plushie-set arbitrage tracking.
   - 30-day average market price for each plushie
   - total plushie set current value (sum of one of each)
   - total plushie set 30-day average value
-  - point market average sell value (past month)
+  - points market average price
   - arbitrage estimate against exchanging a plushie set for 10 points
 - Auto-refreshes all API data every 30 seconds while a token is active.
 
