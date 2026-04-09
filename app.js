@@ -50,6 +50,11 @@ function formatSharePercent(value) {
   return `${value.toFixed(2)}%`;
 }
 
+function formatMoneyWithPercent(value, percentValue) {
+  if (!Number.isFinite(value) || !Number.isFinite(percentValue)) return '--';
+  return `${formatMoney(value)} (${formatPercent(percentValue)})`;
+}
+
 function getDifferencePercent(todaysPrice, itemMarketLow) {
   if (!Number.isFinite(todaysPrice) || todaysPrice === 0 || !Number.isFinite(itemMarketLow)) return NaN;
   return ((itemMarketLow - todaysPrice) / todaysPrice) * 100;
@@ -237,13 +242,21 @@ function render(plushies, pointsAverage) {
     .join('');
 
   const itemMarketLowTotal = plushies.reduce((sum, p) => sum + p.itemMarketLow, 0);
+  const itemMarketLowArbitrage = tenPointValue - itemMarketLowTotal;
+  const todaysPriceArbitrage = tenPointValue - todaysPriceTotal;
+  const itemMarketLowArbitragePercent = itemMarketLowTotal > 0
+    ? (itemMarketLowArbitrage / itemMarketLowTotal) * 100
+    : NaN;
+  const todaysPriceArbitragePercent = todaysPriceTotal > 0
+    ? (todaysPriceArbitrage / todaysPriceTotal) * 100
+    : NaN;
 
   els.setItemMarketLowTotal.textContent = formatMoney(itemMarketLowTotal);
   els.setTodaysPriceTotal.textContent = formatMoney(todaysPriceTotal);
   els.pointsAverage.textContent = formatMoney(pointsAverage);
   els.tenPointValue.textContent = formatMoney(tenPointValue);
-  els.arbItemMarketLowSet.textContent = formatMoney(tenPointValue - itemMarketLowTotal);
-  els.arbTodaysPriceSet.textContent = formatMoney(tenPointValue - todaysPriceTotal);
+  els.arbItemMarketLowSet.textContent = formatMoneyWithPercent(itemMarketLowArbitrage, itemMarketLowArbitragePercent);
+  els.arbTodaysPriceSet.textContent = formatMoneyWithPercent(todaysPriceArbitrage, todaysPriceArbitragePercent);
   els.lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
 }
 
