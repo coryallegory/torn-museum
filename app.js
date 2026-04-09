@@ -5,16 +5,16 @@ const PLUSHIES = [
   { name: 'Camel', id: 384 },
   { name: 'Lion', id: 281 },
   { name: 'Panda', id: 274 },
-  { name: 'Red Fox', id: 269 },
-  { name: 'Monkey', id: 273 },
-  { name: 'Nessie', id: 268 },
-  { name: 'Jaguar', id: 266 },
-  { name: 'Chamois', id: 385 },
-  { name: 'Wolverine', id: 215 },
-  { name: 'Stingray', id: 187 },
-  { name: 'Kitten', id: 186 },
-  { name: 'Sheep', id: 267 },
-  { name: 'Teddy Bear', id: 261 }
+  { name: 'Red Fox', id: 268 },
+  { name: 'Monkey', id: 269 },
+  { name: 'Nessie', id: 266 },
+  { name: 'Jaguar', id: 258 },
+  { name: 'Chamois', id: 273 },
+  { name: 'Wolverine', id: 261 },
+  { name: 'Stingray', id: 618 },
+  { name: 'Kitten', id: 215 },
+  { name: 'Sheep', id: 186 },
+  { name: 'Teddy Bear', id: 187 }
 ];
 
 const els = {
