@@ -137,8 +137,3 @@ td a:hover {
 .difference-negative {
   color: var(--ok);
 }
-
-
-.difference-target {
-  color: var(--accent);
-}
