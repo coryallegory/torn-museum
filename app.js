@@ -222,14 +222,13 @@ function render(plushies, pointsAverage) {
         ? (marketSetWeight / 100) * tenPointValue
         : NaN;
       const targetDifferencePercent = getDifferencePercent(p.todaysPrice, targetPrice);
-      const targetDifferenceClassName = getDifferenceClassName(targetDifferencePercent);
       return `
       <tr>
         <td>${p.name}</td>
         <td>${formatMoney(p.todaysPrice)}</td>
         <td>${formatSharePercent(marketSetWeight)}</td>
         <td>${formatMoney(targetPrice)}</td>
-        <td class="${targetDifferenceClassName}">${formatPercent(targetDifferencePercent)}</td>
+        <td class="difference-target">${formatPercent(targetDifferencePercent)}</td>
         <td><a href="${getItemMarketUrl(p.id)}" target="_blank" rel="noopener noreferrer">${formatMoney(p.itemMarketLow)}</a></td>
         <td><a href="${getBazaarUrl(p.id)}" target="_blank" rel="noopener noreferrer">${formatMoney(p.bazaarLow)}</a></td>
         <td class="${differenceClassName}">${formatPercent(differencePercent)}</td>
